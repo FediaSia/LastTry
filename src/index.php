@@ -78,8 +78,7 @@ function sendTelegram($method, $response)
 }
 //обработка сообщений и команды /start
 if (!empty($data['message']['text'])) {
-	$text = $data['message']['text'];
-	
+	$text = $data['message']['text'];	
     if (mb_stripos($text, '/start') !== false) {
 		sendTelegram(
 			'sendMessage', 
@@ -89,8 +88,7 @@ if (!empty($data['message']['text'])) {
 			)
 		);
         exit();
-	} 
-    elseif (mb_stripos($text, !'/start') !== false) {
+	} elseif (mb_stripos($text, !"/start") !== false) {
         $str = 'http://universities.hipolabs.com/search?country=text';
         $result = str_replace('text', $text, $str);
         $json = file_get_contents($result);
@@ -106,23 +104,19 @@ if (!empty($data['message']['text'])) {
                 'text' => 'Ваш университет: ' .$uni
             ),
         );
-        
         $i++;
-        };
+        }
         
 	    exit();
+    
+    } else {
+		sendTelegram(
+			'sendMessage', 
+			array(
+				'chat_id' => $data['message']['chat']['id'],
+				'text' => 'Неверно введено название страны, попробуйте еще раз.'
+	    	)
+	    );
     }
-
-// не знаю как отследить невыполнение команды выше
-//     else(mb_stripos($text) !== false){
-// 		sendTelegram(
-// 			'sendMessage', 
-// 			array(
-// 				'chat_id' => $data['message']['chat']['id'],
-// 				'text' => 'Неверно введено название страны, попробуйте еще раз.'
-// 			)
-// 		)
-//     };
-// 	exit();
-
+	exit();
 }
